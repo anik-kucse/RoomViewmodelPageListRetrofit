@@ -45,6 +45,7 @@ dependencies {
 //    def arch_version = "2.1.0"
     def room_version = "2.2.4"
     def paging_version = "2.1.1"
+    def retrofitVersion = "2.7.2"
 
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
@@ -62,5 +63,7 @@ dependencies {
     // Paging
     implementation "androidx.paging:paging-runtime-ktx:$paging_version" // For Kotlin use paging-runtime-ktx
 
-
+    // retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 }
