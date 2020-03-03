@@ -13,6 +13,9 @@ interface RepoDao {
     fun insertRepos(repos: List<Repo>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReposss(repos: List<Repo>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertRepo(repo: Repo)
 
     @Query("SELECT * FROM repos WHERE (name LIKE :queryString) OR (description LIKE :queryString) ORDER BY stars DESC, name ASC")

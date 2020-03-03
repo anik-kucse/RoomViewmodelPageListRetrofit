@@ -1,10 +1,12 @@
 package com.rcrbd.roomviewmodelpagelistretrofit.data
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.rcrbd.roomviewmodelpagelistretrofit.api.GithubApiService
 import com.rcrbd.roomviewmodelpagelistretrofit.api.searchRepos
 import com.rcrbd.roomviewmodelpagelistretrofit.database.GithubLocalCache
+import com.rcrbd.roomviewmodelpagelistretrofit.model.Repo
 import com.rcrbd.roomviewmodelpagelistretrofit.model.RepoSearchResult
 
 class GithubRepository(
@@ -23,6 +25,10 @@ class GithubRepository(
         val data = cache.reposByName(query)
 
         return RepoSearchResult(data, netWorkErrors)
+    }
+
+    fun serachWithoutNetwork(query: String) : LiveData<List<Repo>> {
+        return cache.reposByName(query)
     }
     fun requestMore(query: String) {
         requestAndSaveData(query)

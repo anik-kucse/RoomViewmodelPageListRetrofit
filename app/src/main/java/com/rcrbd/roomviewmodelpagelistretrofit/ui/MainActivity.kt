@@ -1,9 +1,8 @@
 package com.rcrbd.roomviewmodelpagelistretrofit.ui
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -13,25 +12,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rcrbd.roomviewmodelpagelistretrofit.Injection
 import com.rcrbd.roomviewmodelpagelistretrofit.R
-import com.rcrbd.roomviewmodelpagelistretrofit.api.DEFAULT_QUERY
 import com.rcrbd.roomviewmodelpagelistretrofit.api.GithubApiService
 import com.rcrbd.roomviewmodelpagelistretrofit.api.IN_QUALIFIER
-import com.rcrbd.roomviewmodelpagelistretrofit.api.ServerResponse
 import com.rcrbd.roomviewmodelpagelistretrofit.database.RepoDatabase
 import com.rcrbd.roomviewmodelpagelistretrofit.model.Repo
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: RepoViewModel
     private val adapter = ReposAdapter()
+    private lateinit var coroutineScope: CoroutineScope
 
 
 
@@ -48,7 +43,36 @@ class MainActivity : AppCompatActivity() {
         initAdapter()
 
         val query = savedInstanceState?.getString(LAST_SEARCH_QUERY) ?: DEFAULT_QUERY
-        viewModel.searchRepo(query)
+        supportActionBar?.title = "Fuck it"
+        coroutineScope = CoroutineScope(Dispatchers.Main)
+
+        btn.setOnClickListener {
+            viewModel.searchRepo(query)
+        }
+
+        btn2.setOnClickListener {
+            loadData()
+        }
+    }
+
+    private fun loadData() {
+        coroutineScope.launch(Dispatchers.Main) {
+            loadFromNetWork()
+        }
+
+    }
+
+    private suspend fun loadFromNetWork() {
+        val query = "Android$IN_QUALIFIER"
+        val service = GithubApiService.create()
+        val database = RepoDatabase.getInstance(this@MainActivity)
+        val dao = database.repoDao()
+        val res = withContext(Dispatchers.IO){
+            service.searchRepos(query, 1, 50).execute()
+        }
+        if (res.isSuccessful) {
+                dao.insertReposss(res.body()!!.items)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -58,10 +82,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun initAdapter() {
         list.adapter = adapter
-        viewModel.repos.observe(this, Observer<List<Repo>>{
+        viewModel.reposOnly.observe(this, Observer<List<Repo>> {
             showEmptyList(it?.size == 0)
             adapter.submitList(it)
         })
+//        viewModel.repos.observe(this, Observer<List<Repo>>{
+//            showEmptyList(it?.size == 0)
+//            adapter.submitList(it)
+//        })
         viewModel.networkErrors.observe(this, Observer<String> {
             Toast.makeText(this, "it", Toast.LENGTH_LONG).show()
         })

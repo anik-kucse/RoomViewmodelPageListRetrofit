@@ -16,7 +16,6 @@ class RepoViewModel(
     }
 
     private val queryLiveData = MutableLiveData<String>()
-
     private val repoResult: LiveData<RepoSearchResult> = Transformations.map(queryLiveData) {
         repository.search(it)
     }
@@ -24,6 +23,9 @@ class RepoViewModel(
     val repos : LiveData<List<Repo>> = Transformations.switchMap(repoResult) {
         it.data
     }
+
+    val reposOnly : LiveData<List<Repo>> = repository.serachWithoutNetwork(query = "Android")
+
     val networkErrors: LiveData<String> = Transformations.switchMap(repoResult) {
         it.networkErrors
     }
