@@ -38,14 +38,13 @@ class MainActivity : AppCompatActivity() {
 
         val decoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         list.addItemDecoration(decoration)
-        setupScrollListener()
 
         initAdapter()
 
         val query = savedInstanceState?.getString(LAST_SEARCH_QUERY) ?: DEFAULT_QUERY
         supportActionBar?.title = "Only Room + Repo + ViewModel"
         coroutineScope = CoroutineScope(Dispatchers.Main)
-//        viewModel.searchRepo(query)
+        viewModel.searchRepo(query)
 
         btn.setOnClickListener {
             viewModel.searchRepo(query)
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 //            showEmptyList(it?.size == 0)
 //            adapter.submitList(it)
 //        })
-        viewModel.repos.observe(this, Observer<List<Repo>>{
+        viewModel.repos.observe(this, Observer{
             showEmptyList(it?.size == 0)
             adapter.submitList(it)
         })
@@ -105,20 +104,6 @@ class MainActivity : AppCompatActivity() {
             emptyList.visibility = GONE
             list.visibility = VISIBLE
         }
-    }
-
-    private fun setupScrollListener() {
-        val layoutManager = list.layoutManager as LinearLayoutManager
-        list.addOnScrollListener(object: RecyclerView.OnScrollListener(){
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val totalItemCount = layoutManager.itemCount
-                val visibleItemCount = layoutManager.childCount
-                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-
-                viewModel.listScrolled(visibleItemCount, lastVisibleItemPosition, totalItemCount)
-            }
-        } )
     }
 
     companion object {

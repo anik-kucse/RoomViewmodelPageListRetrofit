@@ -2,6 +2,8 @@ package com.rcrbd.roomviewmodelpagelistretrofit.database
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
+import androidx.paging.PagedList
 import com.rcrbd.roomviewmodelpagelistretrofit.model.Repo
 import java.util.concurrent.Executor
 
@@ -18,7 +20,7 @@ class GithubLocalCache(
         }
     }
 
-    fun reposByName(name: String) : LiveData<List<Repo>> {
+    fun reposByName(name: String) : DataSource.Factory<Int, Repo> {
         return repoDao.reposByName()
     }
 }
