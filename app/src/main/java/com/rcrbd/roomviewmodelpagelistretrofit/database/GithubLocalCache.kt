@@ -19,6 +19,6 @@ class GithubLocalCache(
     }
 
     fun reposByName(name: String) : LiveData<List<Repo>> {
-        return repoDao.reposByName(name)
+        return repoDao.reposByName()
     }
 }

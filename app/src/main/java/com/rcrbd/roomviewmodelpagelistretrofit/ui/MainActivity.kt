@@ -43,8 +43,9 @@ class MainActivity : AppCompatActivity() {
         initAdapter()
 
         val query = savedInstanceState?.getString(LAST_SEARCH_QUERY) ?: DEFAULT_QUERY
-        supportActionBar?.title = "Fuck it"
+        supportActionBar?.title = "Only Room + Repo + ViewModel"
         coroutineScope = CoroutineScope(Dispatchers.Main)
+//        viewModel.searchRepo(query)
 
         btn.setOnClickListener {
             viewModel.searchRepo(query)
@@ -82,14 +83,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun initAdapter() {
         list.adapter = adapter
-        viewModel.reposOnly.observe(this, Observer<List<Repo>> {
-            showEmptyList(it?.size == 0)
-            adapter.submitList(it)
-        })
-//        viewModel.repos.observe(this, Observer<List<Repo>>{
+//        viewModel.reposOnly.observe(this, Observer<List<Repo>> {
 //            showEmptyList(it?.size == 0)
 //            adapter.submitList(it)
 //        })
+        viewModel.repos.observe(this, Observer<List<Repo>>{
+            showEmptyList(it?.size == 0)
+            adapter.submitList(it)
+        })
         viewModel.networkErrors.observe(this, Observer<String> {
             Toast.makeText(this, "it", Toast.LENGTH_LONG).show()
         })
